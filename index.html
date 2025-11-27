@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gorące maźnice w twojej okolicy 🥵</title>
+    <style>
+        :root {
+            --c-dark-blue: rgb(0, 38, 100);
+            --c-orange: rgb(255, 99, 25);
+            --c-light-blue: rgb(0, 151, 217);
+            --c-grey: rgb(197, 199, 200);
+            --c-bg-grey: #f0f2f5;
+            --c-red: rgb(170, 10, 39);
+            --shadow-card: 0 4px 12px rgba(0, 38, 100, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--c-bg-grey);
+            color: var(--c-dark-blue);
+            margin: 0;
+            padding: 20px 10px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--c-red);
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            margin: 10px 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--c-orange);
+            line-height: 1.3;
+        }
+
+        hr { border: 0; border-top: 1px solid #ddd; margin: 20px 0; }
+
+        .control-panel {
+            background: #ffffff;
+            box-shadow: var(--shadow-card); 
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            box-sizing: border-box;
+            transition: transform 0.2s ease;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: var(--c-dark-blue);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--c-light-blue);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--c-dark-blue);
+            font-size: 0.95rem;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 2px solid #e1e4e8;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: #fafafa;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--c-light-blue);
+            outline: none;
+            background-color: #fff;
+        }
+
+        button {
+            background-color: var(--c-dark-blue);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s, transform 0.1s;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            background-color: var(--c-light-blue);
+            transform: scale(0.98);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: #f0f2f5;
+            padding: 5px;
+            border-radius: 12px;
+        }
+        
+        .radio-group label {
+            flex: 1;
+            padding: 12px 5px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 500;
+            margin: 0;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+        
+        .radio-group input[type="radio"] { display: none; }
+        
+        .radio-group input[type="radio"]:checked + label {
+            background-color: #fff;
+            color: var(--c-dark-blue);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-weight: 700;
+            border: 2px solid var(--c-light-blue);
+        }
+
+        #error-message {
+            color: white;
+            background-color: var(--c-red);
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+            box-shadow: 0 4px 10px rgba(170, 10, 39, 0.2);
+        }
+
+        #train-container {
+            display: flex;
+            overflow-x: auto;
+            padding: 40px 20px 50px 20px; 
+            margin: 10px -20px 30px -20px; 
+            background: linear-gradient(to bottom, transparent 95%, rgba(0,0,0,0.03) 100%);
+            border-top: 1px dashed var(--c-grey);
+            border-bottom: 1px dashed var(--c-grey);
+            min-height: 160px;
+            -webkit-overflow-scrolling: touch; 
+        }
+        
+        #train-track {
+            display: flex;
+            align-items: flex-end;
+            margin: 0 auto;
+            width: max-content;
+            padding: 0 20px;
+        }
+
+        .vehicle, .ezt-member {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .ezt-member { margin-right: 2px; }
+
+        .vehicle-body {
+            height: 55px;
+            border: 3px solid var(--c-dark-blue);
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--c-dark-blue);
+            border-radius: 4px;
+            position: relative;
+            z-index: 10;
+            line-height: 1.1;
+            box-sizing: border-box;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* NAPRAWA LOKOMOTYWY */
+        .vehicle:not(.loco) .vehicle-body { width: 130px; }
+        .vehicle.loco .vehicle-body { 
+            background-color: var(--c-grey); 
+            border-radius: 8px 4px 4px 8px;
+            min-width: 130px; /* Dodano minimalną szerokość */
+            width: 100%;      /* Dodano, aby wypełniała kontener nadrzędny */
+        }
+        
+        .ezt-member .vehicle-body { min-width: 85px; padding: 0 4px; }
+        .ezt-member:first-child .vehicle-body { border-radius: 10px 0 0 10px; }
+        .ezt-member:last-child .vehicle-body { border-radius: 0 10px 10px 0; }
+
+        .vehicle.loco::before, .ezt-member:first-child::before {
+            content: "CZOŁO";
+            position: absolute;
+            top: -22px;
+            font-size: 0.65rem;
+            color: #888;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .bogie-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2px;
+            position: absolute;
+            bottom: -20px;
+        }
+        .axle-group { display: flex; gap: 3px; }
+
+        .axle {
+            width: 16px;
+            height: 16px;
+            background-color: var(--c-dark-blue);
+            border-radius: 50%;
+            position: relative;
+            z-index: 15;
+        }
+
+        .axle-number {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: #666;
+            font-weight: bold;
+            width: 30px;
+            text-align: center;
+            z-index: 20;
+        }
+
+        .vehicle.faulty .vehicle-body, .ezt-member.faulty .vehicle-body {
+            border-color: var(--c-red);
+            background-color: #fff0f2;
+            animation: pulse 1.5s infinite;
+        }
+        .axle.faulty-axle {
+            background-color: var(--c-red);
+            box-shadow: 0 0 0 4px rgba(170, 10, 39, 0.3);
+            z-index: 30;
+            transform: scale(1.2);
+        }
+        .axle.warning-axle {
+            background-color: var(--c-orange);
+            box-shadow: 0 0 0 4px rgba(255, 99, 25, 0.3);
+            z-index: 30;
+            transform: scale(1.2);
+        }
+
+        #result-panel {
+            display: none;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 10px;
+            text-align: left;
+            border-left: 6px solid var(--c-dark-blue);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        #result-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        #result-details { line-height: 1.6; font-size: 0.95rem; }
+        
+        /* Lista procedur */
+        .proc-step {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .proc-step::before {
+            content: "➤";
+            position: absolute;
+            left: 0;
+            color: var(--c-light-blue);
+            font-size: 0.8em;
+            top: 3px;
+        }
+
+        #result-check { 
+            margin-top: 20px; 
+            font-size: 0.9rem; 
+            color: #555; 
+            border-top: 1px solid #eee; 
+            padding-top: 10px; 
+        }
+
+        #footer {
+            margin-top: auto;
+            padding: 30px 20px 40px 20px; 
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #777;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #footer span { font-weight: bold; color: var(--c-dark-blue); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(170, 10, 39, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(170, 10, 39, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(170, 10, 39, 0); }
+        }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 1.2rem; }
+            .control-panel { padding: 15px; margin-bottom: 20px; }
+            .radio-group label { font-size: 0.8rem; padding: 10px 2px; }
+            button { padding: 14px; font-size: 0.95rem; }
+            #ezt-units-controls-container .radio-group label { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>GORĄCE MAŹNICE <br>W TWOJEJ OKOLICY 🥵 <br><br>ASYSTENT TEN POMOŻE CI ZNALEŹĆ <BR> OŚ I WAGON W KTÓRYM WYKRYTO NIEPRAWIDŁOWOŚĆ</h1>
+    
+    <div class="control-panel">
+        <h3>0. Wybór trybu pracy</h3>
+        <div class="radio-group" id="mode-selector">
+            <input type="radio" id="mode-classic" name="trainMode" value="classic" checked onchange="changeMode('classic')">
+            <label for="mode-classic">Skład Klasyczny</label>
+            
+            <input type="radio" id="mode-ezt" name="trainMode" value="ezt" onchange="changeMode('ezt')">
+            <label for="mode-ezt">Skład Zespolony (EZT)</label>
+        </div>
+    </div>
+    
+    <div class="control-panel" id="classic-mode-panel">
+        <h3>1. Skład klasyczny</h3>
+        <label for="locoAxleCount">Ilość osi lokomotywy:</label>
+        <input type="number" id="locoAxleCount" placeholder="np. 4" min="2" value="4" inputmode="numeric">
+        
+        <label for="wagonCount">Liczba wagonów:</label>
+        <input type="number" id="wagonCount" placeholder="np. 10" min="0" value="0" inputmode="numeric">
+        <button onclick="buildClassic()">ZATWIERDŹ SKŁAD KLASYCZNY</button>
+    </div>
+    
+    <div class="control-panel" id="ezt-mode-panel" style="display: none;">
+        <h3>1. Skład Zespolony (EZT)</h3>
+
+        <label for="eztSeries">Seria EZT:</label>
+        <select id="eztSeries" onchange="generateEZTUnitsControls()">
+            <optgroup label="- PESA -">
+                <option value="ED74">ED74</option>
+                <option value="ED161">ED161</option>
+            </optgroup>
+            <optgroup label="- STADLER -">
+                <option value="ED160">ED160</option>
+            </optgroup>
+            <optgroup label="- ALSTOM -">
+                <option value="ED250">ED250</option>
+            </optgroup>
+        </select>
+        
+        <label for="eztCountInput">Liczba jednostek EZT:</label>
+        <input type="number" id="eztCountInput" placeholder="np. 1" min="1" max="4" value="1" onchange="generateEZTUnitsControls()" inputmode="numeric">
+        
+        <div id="ezt-units-controls-container"></div>
+        <button onclick="buildEZT()">ZATWIERDŹ SKŁAD ZESPOLONY</button>
+    </div>
+
+    <div id="train-container">
+        <p style="width:100%; text-align:center; color: #888; font-size: 0.9rem;">
+            Zatwierdź skład, aby zobaczyć schemat.<br>
+            <span style="font-size:0.8rem; opacity:0.7;">(Możesz przesuwać schemat palcem)</span>
+        </p>
+    </div>
+
+    <div class="control-panel" id="alert-panel" style="opacity: 0.6; pointer-events: none; filter: grayscale(1);">
+        <h3>2. Dane z ASDEK</h3>
+        <div id="error-message"></div>
+
+        <label>Źródło danych:</label>
+        <div class="radio-group">
+            <input type="radio" id="inputX" name="axleSource" value="X" checked>
+            <label for="inputX">Oś od CZOŁA (X)</label>
+            <input type="radio" id="inputY" name="axleSource" value="Y">
+            <label for="inputY">Oś od KOŃCA (Y)</label>
+        </div>
+
+        <label for="axleInput">Numer osi:</label>
+        <input type="number" id="axleInput" placeholder="Podaj numer osi" inputmode="numeric">
+        
+        <label for="faultType">Rodzaj nieprawidłowości:</label>
+        <select id="faultType">
+            <optgroup label="Gorące Maźnice / Hamulce">
+                <option value="GM-STOP">GM - STOP (Alarm)</option>
+                <option value="GM-OSTR">GM - OSTR (Ostrzeżenie)</option>
+                <option value="GH-STOP">GH - STOP (Alarm)</option>
+                <option value="GH-OSTR">GH - OSTR (Ostrzeżenie)</option>
+            </optgroup>
+            <optgroup label="Płaskie Miejsca / Inne">
+                <option value="PM-STOP">PM - STOP (Alarm)</option>
+                <option value="PM-OSTR">PM - OSTR (Ostrzeżenie)</option>
+                <option value="PD-STOP">PD - STOP (Alarm)</option>
+            </optgroup>
+        </select>
+
+        <button onclick="diagnoseFault()" style="background-color: var(--c-red);">ZNAJDŹ MIEJSCE USTERKI</button>
+    </div>
+
+    <div id="result-panel">
+        <span id="result-title">KOMUNIKAT:</span>
+        <div id="result-details"></div>
+        <div id="result-check"></div>
+    </div>
+    
+    <div id="footer">
+        Opracowanie: Gemini (Large Language Model)<br>
+        Współautor i konsultant merytoryczny: <span>Piotr M 🚂</span>
+    </div>
+
+    <script>
+        let totalAxles = 0; 
+        let currentMode = 'classic';
+        let trainMap = []; 
+        
+        const EZT_CONFIGS = {
+            'ED160': { 
+                members: [
+                    { id: 'A', axles: [2, 1] }, 
+                    { id: 'H', axles: [1, 1] }, 
+                    { id: 'G', axles: [1, 1] }, 
+                    { id: 'F', axles: [1, 2] }, 
+                    { id: 'E', axles: [2, 1] }, 
+                    { id: 'D', axles: [1, 1] }, 
+                    { id: 'C', axles: [1, 1] }, 
+                    { id: 'B', axles: [1, 2] }  
+                ]
+            },
+            'ED161': { 
+                members: [
+                    { id: 'A', axles: [2, 1] }, 
+                    { id: 'B', axles: [1, 1] }, 
+                    { id: 'C', axles: [1, 1] }, 
+                    { id: 'D', axles: [1, 1] }, 
+                    { id: 'E', axles: [1, 1] }, 
+                    { id: 'F', axles: [1, 1] }, 
+                    { id: 'G', axles: [1, 1] }, 
+                    { id: 'H', axles: [1, 2] } 
+                ]
+            },
+            'ED74': { 
+                members: [
+                    { id: 'A', axles: [2, 1] }, 
+                    { id: 'B', axles: [1, 1] }, 
+                    { id: 'C', axles: [1, 1] }, 
+                    { id: 'D', axles: [1, 2] }  
+                ]
+            },
+            'ED250': { 
+                members: [
+                    { id: 'A', axles: [2, 2] },
+                    { id: 'B', axles: [2, 2] },
+                    { id: 'C', axles: [2, 2] },
+                    { id: 'D', axles: [2, 2] },
+                    { id: 'E', axles: [2, 2] },
+                    { id: 'F', axles: [2, 2] },
+                    { id: 'G', axles: [2, 2] }
+                ]
+            }
+        };
+
+        function displayError(msg) {
+            const el = document.getElementById('error-message');
+            el.innerText = msg;
+            el.style.display = 'block';
+            document.getElementById('result-panel').style.display = 'none';
+        }
+
+        function clearError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+        
+        function changeMode(mode) {
+            currentMode = mode;
+            document.getElementById('classic-mode-panel').style.display = (mode === 'classic' ? 'block' : 'none');
+            document.getElementById('ezt-mode-panel').style.display = (mode === 'ezt' ? 'block' : 'none');
+            document.getElementById('train-container').innerHTML = '<p style="width:100%; text-align:center; color: #888; padding: 20px;">Zatwierdź skład, aby zobaczyć schemat.</p>';
+            
+            const alertPanel = document.getElementById('alert-panel');
+            alertPanel.style.opacity = "0.6";
+            alertPanel.style.pointerEvents = "none";
+            alertPanel.style.filter = "grayscale(1)";
+            
+            document.getElementById('result-panel').style.display = 'none';
+            totalAxles = 0;
+            trainMap = [];
+            clearError();
+            if (mode === 'ezt') generateEZTUnitsControls();
+        }
+        
+        function generateEZTUnitsControls() {
+            const count = parseInt(document.getElementById('eztCountInput').value) || 1;
+            const container = document.getElementById('ezt-units-controls-container');
+            const series = document.getElementById('eztSeries').value;
+            container.innerHTML = '';
+            
+            let labelNormal = "Normalny";
+            let labelReverse = "Odwrócony";
+            
+            if (series === 'ED160') {
+                labelNormal = "A → B"; labelReverse = "B → A";
+            } else if (series === 'ED161') {
+                labelNormal = "A → H"; labelReverse = "H → A"; 
+            } else if (series === 'ED74') {
+                labelNormal = "A → D"; labelReverse = "D → A";
+            } else if (series === 'ED250') {
+                labelNormal = "A → G"; labelReverse = "G → A";
+            }
+
+            for (let i = 1; i <= count; i++) {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label style="margin-top:15px; font-weight:normal; font-size:0.9rem;">Kierunek Jednostki ${i}:</label>
+                    <div class="radio-group" style="margin-bottom:5px; padding:5px;">
+                        <input type="radio" id="eztDirAB-${i}" name="eztDirection-${i}" value="AB" checked>
+                        <label for="eztDirAB-${i}">${labelNormal}</label>
+                        <input type="radio" id="eztDirBA-${i}" name="eztDirection-${i}" value="BA">
+                        <label for="eztDirBA-${i}">${labelReverse}</label>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+        }
+        
+        function activateAlertPanel() {
+            const alertPanel = document.getElementById('alert-panel');
+            alertPanel.style.opacity = "1";
+            alertPanel.style.pointerEvents = "auto";
+            alertPanel.style.filter = "none";
+            document.getElementById('result-panel').style.display = 'none';
+            clearError();
+            alertPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function buildEZT() {
+            const series = document.getElementById('eztSeries').value;
+            const count = parseInt(document.getElementById('eztCountInput').value);
+            const container = document.getElementById('train-container');
+            
+            container.innerHTML = '<div id="train-track"></div>';
+            const track = document.getElementById('train-track');
+            
+            let currentAxleGlobal = 1;
+            trainMap = [];
+
+            for (let u = 1; u <= count; u++) {
+                const direction = document.querySelector(`input[name="eztDirection-${u}"]:checked`).value;
+                let unitMembers = JSON.parse(JSON.stringify(EZT_CONFIGS[series].members)); 
+                
+                if (direction === 'BA') {
+                    unitMembers.reverse();
+                    unitMembers.forEach(m => m.axles.reverse());
+                }
+
+                unitMembers.forEach(member => {
+                    const frontAxles = member.axles[0];
+                    const rearAxles = member.axles[1];
+                    const totalMemberAxles = frontAxles + rearAxles;
+
+                    const memberDiv = document.createElement('div');
+                    memberDiv.className = 'ezt-member';
+                    memberDiv.id = `vehicle-${currentAxleGlobal}`;
+
+                    const bodyDiv = document.createElement('div');
+                    bodyDiv.className = 'vehicle-body';
+                    bodyDiv.innerHTML = `<span style="font-size:0.8em; display:block;">${series}</span><span style="font-size:1.1em;">${member.id}</span>`;
+                    memberDiv.appendChild(bodyDiv);
+
+                    const bogieContainer = document.createElement('div');
+                    bogieContainer.className = 'bogie-container';
+                    
+                    const frontGroup = document.createElement('div');
+                    frontGroup.className = 'axle-group';
+                    for(let k=0; k<frontAxles; k++) {
+                        frontGroup.appendChild(createAxleDot(currentAxleGlobal + k));
+                    }
+                    bogieContainer.appendChild(frontGroup);
+
+                    const rearGroup = document.createElement('div');
+                    rearGroup.className = 'axle-group';
+                    for(let k=0; k<rearAxles; k++) {
+                        rearGroup.appendChild(createAxleDot(currentAxleGlobal + frontAxles + k));
+                    }
+                    bogieContainer.appendChild(rearGroup);
+
+                    memberDiv.appendChild(bogieContainer);
+                    track.appendChild(memberDiv);
+
+                    trainMap.push({ 
+                        start: currentAxleGlobal, 
+                        end: currentAxleGlobal + totalMemberAxles - 1, 
+                        name: `${series} / ${member.id} (Jednostka ${u})` 
+                    });
+                    
+                    currentAxleGlobal += totalMemberAxles;
+                });
+
+                if (u < count) {
+                     const sep = document.createElement('div');
+                     sep.style.width = '20px';
+                     sep.style.borderBottom = '2px dashed #ccc';
+                     sep.style.marginBottom = '25px';
+                     track.appendChild(sep);
+                }
+            }
+
+            totalAxles = currentAxleGlobal - 1;
+            activateAlertPanel();
+        }
+
+        function buildClassic() {
+            const locoAxles = parseInt(document.getElementById('locoAxleCount').value);
+            const wagons = parseInt(document.getElementById('wagonCount').value);
+            const container = document.getElementById('train-container');
+            
+            container.innerHTML = '<div id="train-track"></div>';
+            const track = document.getElementById('train-track');
+
+            let currentAxleGlobal = 1;
+            trainMap = [];
+
+            track.appendChild(createClassicVehicle('LOK', locoAxles, currentAxleGlobal, true));
+            trainMap.push({ start: currentAxleGlobal, end: currentAxleGlobal + locoAxles - 1, name: 'LOKOMOTYWA' });
+            currentAxleGlobal += locoAxles;
+
+            for (let i = 1; i <= wagons; i++) {
+                track.appendChild(createClassicVehicle(`Wag ${i}`, 4, currentAxleGlobal, false));
+                trainMap.push({ start: currentAxleGlobal, end: currentAxleGlobal + 3, name: `WAGON ${i}` });
+                currentAxleGlobal += 4;
+            }
+
+            totalAxles = currentAxleGlobal - 1;
+            activateAlertPanel();
+        }
+
+        function createClassicVehicle(name, axles, startIdx, isLoco) {
+            const div = document.createElement('div');
+            div.className = `vehicle ${isLoco ? 'loco' : ''}`;
+            div.id = `vehicle-${startIdx}`;
+            
+            const body = document.createElement('div');
+            body.className = 'vehicle-body';
+            body.innerHTML = isLoco ? `${name}<br><small style="font-weight:normal; font-size:0.7em">(${axles} osi)</small>` : name;
+            div.appendChild(body);
+
+            const bogies = document.createElement('div');
+            bogies.className = 'bogie-container';
+            
+            const group1 = document.createElement('div');
+            group1.className = 'axle-group';
+            for(let i=0; i<axles/2; i++) group1.appendChild(createAxleDot(startIdx + i));
+            
+            const group2 = document.createElement('div');
+            group2.className = 'axle-group';
+            for(let i=0; i<axles/2; i++) group2.appendChild(createAxleDot(startIdx + axles/2 + i));
+
+            bogies.appendChild(group1);
+            bogies.appendChild(group2);
+            div.appendChild(bogies);
+            
+            if(isLoco) div.style.minWidth = `${120 + (axles-4)*10}px`;
+
+            return div;
+        }
+
+        function createAxleDot(idx) {
+            const d = document.createElement('div');
+            d.className = 'axle';
+            d.id = `axle-${idx}`;
+            const s = document.createElement('span');
+            s.className = 'axle-number';
+            s.innerText = idx;
+            d.appendChild(s);
+            return d;
+        }
+
+        function diagnoseFault() {
+            clearError();
+            document.querySelectorAll('.faulty, .faulty-axle, .warning, .warning-axle').forEach(e => {
+                e.classList.remove('faulty', 'faulty-axle', 'warning', 'warning-axle');
+            });
+
+            if(totalAxles === 0) {
+                displayError("Najpierw zatwierdź skład!");
+                return;
+            }
+
+            const inputRaw = parseInt(document.getElementById('axleInput').value);
+            const source = document.querySelector('input[name="axleSource"]:checked').value;
+            const faultType = document.getElementById('faultType').value;
+
+            if(isNaN(inputRaw) || inputRaw < 1 || inputRaw > totalAxles) {
+                displayError(`Numer osi musi być w zakresie 1-${totalAxles}`);
+                return;
+            }
+
+            let axleX = source === 'X' ? inputRaw : (totalAxles - inputRaw + 1);
+            let axleY = source === 'Y' ? inputRaw : (totalAxles - inputRaw + 1);
+
+            const vehicle = trainMap.find(v => axleX >= v.start && axleX <= v.end);
+            const vName = vehicle ? vehicle.name : "Nieznany";
+
+            const target = document.getElementById(`axle-${axleX}`);
+            const isStop = faultType.includes('STOP') || faultType.includes('GRAN');
+            
+            if(target) {
+                target.classList.add(isStop ? 'faulty-axle' : 'warning-axle');
+                const vDiv = target.closest('.vehicle') || target.closest('.ezt-member');
+                vDiv.classList.add(isStop ? 'faulty' : 'warning');
+                vDiv.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'center' });
+            }
+
+            const resDetails = document.getElementById('result-details');
+            const resCheck = document.getElementById('result-check');
+            const resTitle = document.getElementById('result-title');
+            
+            let title = "", proc = "";
+            let color = isStop ? "var(--c-red)" : "var(--c-orange)";
+            
+            switch(faultType) {
+                case "GM-STOP":
+                    title = "ALARM (STOP) - GORĄCA MAŹNICA";
+                    proc = `<div class='proc-step'><strong>NATYCHMIASTOWE ZATRZYMANIE POCIĄGU!</strong></div>
+                            <div class='proc-step'>Sprawdź temperaturę korpusu maźnicy wierzchem dłoni (zachowaj ostrożność!).</div>
+                            <div class='proc-step'>Porównaj temperaturę z pozostałymi maźnicami tego samego wagonu.</div>
+                            <div class='proc-step'>Sprawdź, czy nie ma wycieku smaru (bryzganie na podwozie).</div>
+                            <div class='proc-step'>Jeśli łożysko jest gorące lub temperatura wyraźnie wyższa od innych -> <strong>Wyłączenie wagonu ze składu.</strong></div>`;
+                    break;
+
+                case "GH-STOP":
+                    title = "ALARM (STOP) - GORĄCY HAMULEC";
+                    proc = `<div class='proc-step'><strong>NATYCHMIASTOWE ZATRZYMANIE POCIĄGU!</strong></div>
+                            <div class='proc-step'>Sprawdź, czy hamulec jest zahamowany (wstawki dymią, klocki przywarte).</div>
+                            <div class='proc-step'>Jeśli zablokowany -> Pociągnij za "wyuzdacz" (odluźniacz).</div>
+                            <div class='proc-step'>Sprawdź, czy hamulec ręczny jest zwolniony.</div>
+                            <div class='proc-step'>Sprawdź, czy nie ma nalepów ("nawarów") na kołach.</div>
+                            <div class='proc-step'>Jeśli nie można odluźnić -> Wyłączenie hamulca (zakręcenie kurka) i opróżnienie zbiorników powietrznych.</div>`;
+                    break;
+
+                case "PM-STOP":
+                    title = "ALARM (STOP) - PŁASKIE MIEJSCE";
+                    proc = `<div class='proc-step'><strong>ZATRZYMANIE POCIĄGU (zwykłe).</strong></div>
+                            <div class='proc-step'>Dokonaj oględzin tocznych powierzchni kół pod kątem płaskich miejsc, wykruszeń lub nalepów.</div>
+                            <div class='proc-step'><strong>Zmierz długość płaskiego miejsca.</strong></div>
+                            <div class='proc-step'>Jeśli długość ≤ 60mm -> Jazda do 60 km/h do najbliższej stacji.</div>
+                            <div class='proc-step'>Jeśli długość > 60mm -> Jazda z prędkością pieszego (lub max 20 km/h) do usunięcia wagonu.</div>`;
+                    break;
+                
+                case "PD-STOP":
+                    title = "ALARM (STOP) - PRZECIĄŻENIE DYNAMICZNE";
+                    proc = `<div class='proc-step'><strong>ZATRZYMANIE POCIĄGU.</strong></div>
+                            <div class='proc-step'>Dokonaj oględzin kół (płaskie miejsca, nalepy).</div>
+                            <div class='proc-step'>Postępowanie analogiczne jak przy Płaskim Miejscu (pomiary, ograniczenie prędkości).</div>`;
+                    break;
+
+                case "GM-OSTR":
+                    title = "OSTRZEŻENIE - GORĄCA MAŹNICA";
+                    proc = `<div class='proc-step'>Powiadom maszynistę.</div>
+                            <div class='proc-step'>Obserwuj wagon podczas jazdy.</div>
+                            <div class='proc-step'>Na najbliższym postoju handlowym lub dogodnym miejscu dokonaj oględzin i sprawdź temperaturę.</div>`;
+                    break;
+
+                case "GH-OSTR":
+                    title = "OSTRZEŻENIE - GORĄCY HAMULEC";
+                    proc = `<div class='proc-step'>Powiadom maszynistę.</div>
+                            <div class='proc-step'>Obserwuj wagon podczas jazdy (dymienie, iskry).</div>
+                            <div class='proc-step'>Na najbliższym postoju sprawdź stan hamulców i kół.</div>`;
+                    break;
+                
+                default: // PM-OSTR, PD-OSTR
+                    title = "OSTRZEŻENIE";
+                    proc = `<div class='proc-step'>Powiadom maszynistę.</div>
+                            <div class='proc-step'>Jazda do stacji docelowej lub wyznaczonej.</div>
+                            <div class='proc-step'>Obserwuj zachowanie pojazdu.</div>`;
+                    break;
+            }
+
+            resTitle.innerText = title;
+            resTitle.style.color = color;
+            document.getElementById('result-panel').style.borderLeftColor = color;
+            
+            resDetails.innerHTML = proc;
+            resCheck.innerHTML = `Lokalizacja: <strong>${vName}</strong><br>Oś od czoła: ${axleX}<br>Oś od końca: ${axleY}`;
+            
+            const resPanel = document.getElementById('result-panel');
+            resPanel.style.display = 'block';
+            resPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        // Init
+        changeMode('classic');
+    </script>
+</body>
+</html>
