@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gorące maźnice w twojej okolicy 🥵</title>
+    <meta name="theme-color" content="#002664">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <style>
@@ -851,4 +854,23 @@
 
     </script>
 </body>
+<footer style="margin-top: 40px; padding: 15px; border-top: 1px solid rgb(197, 199, 200); color: rgb(0, 38, 100); font-size: 0.85rem; text-align: center;">
+        Współautorzy: Gemini & Piotr M 🚂<br>
+        Wersja aplikacji: v1.0
+    </footer>
+
+    <script>
+        // Rejestracja Service Workera dla PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker zarejestrowany pomyślnie z zakresem: ', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Błąd rejestracji Service Workera: ', error);
+                    });
+            });
+        }
+    </script>
 </html>

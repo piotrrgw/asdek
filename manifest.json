@@ -1,0 +1,21 @@
+{
+  "name": "GORĄCE HAMULCE W TWOJEJ OKOLICY",
+  "short_name": "Gorące Hamulce",
+  "description": "Narzędzie do lokalizacji usterek wskazanych przez ASDEK",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#002664",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
